@@ -1,6 +1,6 @@
 -- =============================================
--- TICKET_001: RELEVAMIENTO Y DISEÑO DE BD
--- PROYECTO: GESTIÓN INMOBILIARIA
+-- TICKET_001: RELEVAMIENTO Y DISEÃ‘O DE BD
+-- PROYECTO: GESTIÃ“N INMOBILIARIA
 -- ESTADO: LISTO PARA ENTREGA
 -- =============================================
 
@@ -23,6 +23,7 @@ CREATE TABLE Zonas (
     id_zona INT IDENTITY(1,1) PRIMARY KEY,
     nombre_barrio VARCHAR(100) NOT NULL,
     ciudad VARCHAR(100) DEFAULT 'Coronel Pringles'
+    porcentaje_comision DECIMAL(5, 2) DEFAULT 0.00 -- Nuevo campo para la lÃ³gica de negocio
 );
 
 CREATE TABLE Tipos_Ajuste (
@@ -89,7 +90,7 @@ CREATE TABLE Obligaciones (
     FOREIGN KEY (id_contrato) REFERENCES Contratos(id_contrato)
 );
 
--- 7. SISTEMA DE LOGS (Auditoría avanzada según ejemplo Clínica)
+-- 7. SISTEMA DE LOGS (AuditorÃ­a avanzada segÃºn ejemplo ClÃ­nica)
 CREATE TABLE Auditoria_Logs (
     id_log INT IDENTITY(1,1) PRIMARY KEY,
     fecha DATETIME DEFAULT GETDATE(),
@@ -102,7 +103,7 @@ CREATE TABLE Auditoria_Logs (
 
 GO
 
--- 8. CARGA DE DATOS DE PRUEBA (Mínimo 5 registros por tabla)
+-- 8. CARGA DE DATOS DE PRUEBA (MÃ­nimo 5 registros por tabla)
 -- Tipos y Zonas
 INSERT INTO Tipos_Inmueble (descripcion) VALUES ('Casa'), ('Departamento'), ('Local'), ('Cochera'), ('Lote');
 INSERT INTO Tipos_Ajuste (descripcion) VALUES ('Trimestral'), ('Cuatrimestral'), ('Semestral');
@@ -142,4 +143,4 @@ INSERT INTO Obligaciones (id_contrato, descripcion, importe_referencia) VALUES
 (1, 'Gas Bimestral', 8900.00),
 (2, 'Expensas', 25000.00);
 
-PRINT 'Script ejecutado con éxito. Base de Datos GestionInmobiliaria lista.';
+PRINT 'Script ejecutado con Ã©xito. Base de Datos GestionInmobiliaria lista.';
