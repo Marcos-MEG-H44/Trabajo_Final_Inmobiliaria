@@ -1,72 +1,67 @@
-¡Claro que sí! Para que tu entrega sea de "buen nivel" (como pide la cátedra de la UTN), la documentación debe ser técnica, estar bien estructurada y justificar las decisiones de diseño.
+Informe de Relevamiento y Diseño de Base de Datos
 
-Aquí tienes el contenido completo para tu archivo /leeme/ticket_001.md, redactado profesionalmente y basado en el script y las fotos que compartiste.
+Proyecto: Sistema de Gestión Inmobiliaria (MVP)
+Ticket: #001 
+Responsables: Mateo Cluchinsky / Marcos Godoy
 
-Informe de Relevamiento y Diseño: Sistema de Gestión Inmobiliaria
-Ticket: #001
 
-Estado: Finalizado
+1. Introducción y Contexto del Negocio
+El presente documento detalla el análisis y diseño inicial de la base de datos para la centralización operativa de una agencia inmobiliaria ubicada en Coronel Pringles, Argentina.
+Tras la entrevista realizada a la propietaria de una inmobiliaria, se identificó que el principal problema radica en la descentralización de la información (actualmente manejada en planillas de cálculo), lo que genera pérdida de trazabilidad en los contratos, falta de control en los vencimientos de servicios y cálculos manuales de honorarios propensos a errores.
 
-Dominio: Gestión de Alquileres y Propiedades
-
-1. Descripción del Negocio
-El proyecto surge de la necesidad de modernizar la gestión operativa de una inmobiliaria local (Coronel Pringles). Actualmente, la entidad maneja su información mediante planillas de cálculo (Excel), lo que dificulta la trazabilidad de los contratos y el control de las obligaciones mensuales (servicios, impuestos y ajustes).
-
-El sistema centralizará la gestión de propietarios, inquilinos, contratos y el seguimiento de pagos, permitiendo además una auditoría completa de los movimientos realizados por el personal.
 
 2. Requerimientos Funcionales (RF)
-Basado en el análisis de los formularios y planillas actuales, se identifican:
+Se han priorizado las funcionalidades críticas para el Producto Mínimo Viable (MVP):
 
-RF1 - Gestión de Personas: El sistema debe permitir el registro unificado de clientes, distinguiendo sus datos de contacto, financieros (CBU/Alias) y fiscales (CUIL/CUIT).
+RF1 - Registro Unificado de Personas: El sistema debe gestionar en una única entidad a propietarios e inquilinos para evitar la duplicidad de datos, permitiendo almacenar información fiscal (CUIT/CUIL) y financiera (CBU/Alias).
 
-RF2 - Administración de Propiedades: Registro de inmuebles vinculados a un propietario, categorizados por zona y tipo.
+RF2 - Gestión de Inmuebles por Zona: Clasificación de propiedades por tipo y ubicación geográfica específica.
 
-RF3 - Control de Contratos: Creación de vínculos legales entre inquilinos y propiedades con fechas de vigencia, montos iniciales y tipos de ajuste predefinidos.
+RF3 - Motor de Comisiones Automáticas: Cálculo de honorarios basado en el porcentaje de comisión predefinido para cada zona geográfica.
 
-RF4 - Gestión de Obligaciones: El sistema debe permitir cargar conceptos adicionales al alquiler (ABL, Gas, Ajustes) vinculados a cada contrato.
+RF4 - Administración de Contratos y Obligaciones: Vinculación de inquilinos con propiedades, permitiendo el seguimiento de pagos mensuales y obligaciones adicionales como tasas municipales (ABL), gas y expensas.
 
-RF5 - Auditoría de Sistema: Registro automático de eventos críticos (altas, bajas, errores) para garantizar la seguridad de la información.
+RF5 - Sistema de Alertas de Morosidad: Generación de notificaciones automáticas para contratos con saldos pendientes o vencimientos próximos.
+
+RF6 - Auditoría de Operaciones: Registro detallado de acciones (Logs) realizadas por los usuarios para garantizar la integridad y seguridad de la información.
+
 
 3. Requerimientos No Funcionales (RNF)
-RNF1 - Persistencia: Uso del motor SQL Server para garantizar la integridad referencial.
 
-RNF2 - Seguridad: Acceso restringido mediante perfiles (Administrador, Secretariado, Profesional). Las contraseñas se almacenarán mediante hashing.
+RNF1 - Integridad Referencial: Uso de un motor de base de datos relacional (SQL Server) para asegurar la consistencia de los datos.
 
-RNF3 - Trazabilidad: Implementación de logs con niveles de severidad (INFO, DEBUG, ERROR) según el estándar solicitado.
+RNF2 - Seguridad de Acceso: Implementación de perfiles de usuario con contraseñas encriptadas (hashing) y niveles de acceso diferenciados.
+
+RNF3 - Escalabilidad: Diseño preparado para la incorporación futura de ciudades adicionales (ej. Bahía Blanca) mediante tablas maestras de provincias y localidades.
+
 
 4. Actores del Sistema
-Administrador: Posee acceso total al sistema, gestión de usuarios y visualización de logs de auditoría.
+Se definen tres roles operativos basados en la estructura de la agencia:
 
-Secretariado: Encargado de la carga de clientes, propiedades y contratos. Realiza el seguimiento diario de obligaciones.
+Administrador: Acceso total a la configuración del sistema, gestión de usuarios, definición de porcentajes de comisión por zona y auditoría de logs.
 
-Profesional (Agente): Consulta de disponibilidad de inmuebles y estados de contratos.
+Secretariado: Perfil encargado de la carga operativa de clientes, propiedades y contratos, además del registro diario de cobros.
 
-5. Diseño y Normalización (3FN)
-El modelo de datos ha sido normalizado hasta la Tercera Forma Normal (3FN) para eliminar la redundancia y asegurar la consistencia:
+Profesional (Agente): Acceso a la consulta de estados de contratos y disponibilidad de propiedades para visitas externas.
 
-Primera Forma Normal (1FN): Se garantizaron valores atómicos. Campos como "Nombre y Apellido" o "Dirección" se manejan de forma independiente.
 
-Segunda Forma Normal (2FN): Se crearon tablas para entidades con identidad propia (Personas, Propiedades, Contratos), eliminando dependencias parciales.
+5. Estrategia de Normalización (3FN)
+El modelo de datos ha sido diseñado bajo los estándares de la Tercera Forma Normal (3FN) para optimizar el rendimiento y la integridad:
 
-Tercera Forma Normal (3FN): Se extrajeron atributos transitivos a tablas maestras. Por ejemplo, la descripción del Tipo_Ajuste o la Zona no dependen de la clave del contrato o propiedad, sino de sus propios IDs.
+1FN (Atomicidad): Se descompusieron atributos complejos como "Dirección" y "Nombre Completo" en campos individuales para facilitar búsquedas y reportes precisos.
 
-6. Diccionario de Datos Resumido
-Personas: Almacena a todos los actores humanos del sistema. Se utiliza una sola tabla para evitar duplicar datos si una persona es inquilina en un contrato y propietaria en otro.
+2FN (Dependencia Funcional): Se eliminaron dependencias parciales mediante la creación de tablas maestras como Tipos_Inmueble y Zonas, asegurando que cada atributo dependa exclusivamente de su clave primaria.
 
-Contratos: Tabla central que une inquilino, propiedad y condiciones comerciales.
+3FN (Eliminación de Transitividad): Se extrajeron datos que no dependían directamente del contrato o la propiedad. Un ejemplo clave es el porcentaje de comisión, el cual reside en la tabla Zonas y no en la tabla Propiedades, evitando inconsistencias si las tarifas por barrio se actualizan.
 
-Obligaciones: Permite una estructura flexible para cargar cualquier tipo de gasto o ajuste sin modificar la estructura del contrato.
 
-Auditoria_Logs: Diseñada para cumplir con los lineamientos de robustez y control de excepciones.
+6. Reglas de Negocio Críticas
+Estado de Propiedad: Un inmueble no puede figurar como "Disponible" si tiene un contrato de alquiler activo asociado.
 
-Instrucciones de Instalación
-Abrir SQL Server Management Studio.
+Referencia Geográfica: Toda propiedad debe estar vinculada obligatoriamente a una zona para que el sistema pueda proyectar los honorarios de la operación.
 
-Ejecutar el script ubicado en /sql/ticket_001.sql.
+Gestión de Pagos: El sistema no permitirá cerrar un mes de alquiler sin registrar el estado (Pagado/Pendiente) de las obligaciones vinculadas al contrato.
 
-Verificar la creación de la base de datos GestionInmobiliaria.
 
-El sistema cuenta con un usuario inicial: admin / clave: 0123.
-
-Recomendación final para tu proyecto:
-Cuando entregues el DER (Diagrama Entidad Relación), asegúrate de que los nombres de las tablas coincidan exactamente con el script que te pasé. Si necesitas que te ayude a describir cómo hacer el diagrama en base a este script, avisame.
+Conclusión del Análisis
+El diseño propuesto no solo resuelve el desorden administrativo detectado en la entrevista con Paola, sino que establece una base técnica sólida para automatizar tareas repetitivas y reducir el error humano en los cálculos financieros del negocio.
