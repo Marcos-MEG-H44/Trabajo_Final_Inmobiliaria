@@ -8,9 +8,9 @@ class DBConnection {
 
     public static function connect() {
         if (self::$connection === null) {
-            self::$connection = new mysqli(self::$host, self::$user, self::$password, self::$database);
-            if(self::$connection->connect_error){
-                die("Error de conexion: " . self::$connection->connect_error);
+            self::$connection = mysqli_connect(self::$host, self::$user, self::$password, self::$database);
+            if (!self::$connection) {
+                die("Error de conexion: " . mysqli_connect_error());
             }
         }
         return self::$connection;
@@ -18,14 +18,13 @@ class DBConnection {
 
     public static function query($sql) {
         $conn = self::connect();
-        return $conn->query($sql);
+        return mysqli_query($conn, $sql);
     }
 
-    public static function close() {
-        if (self::$connection !== null) {
-            self::$connection->close();
-            self::$connection = null;
-        }
+    // Método para limpiar strings (Vital para seguridad)
+    public static function escape($value) {
+        return mysqli_real_escape_string(self::connect(), $value);
+    }
 
     }
 }
