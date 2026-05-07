@@ -6,16 +6,19 @@ class dao_personas {
         // Limpia los datos antes de usarlos
         $n = DBConnection::escape($nombre);
         $a = DBConnection::escape($apellido);
+        $id_td = (int)$id_tipo_doc; // Asegura que sea número
         $doc = DBConnection::escape($nro_documento);
         $e = DBConnection::escape($email);
         
         $sql = "INSERT INTO personas (nombre, apellido, id_tipo_doc, nro_documento, email) 
-                VALUES ('$nombre', '$apellido', $id_tipo_doc, '$nro_documento', '$email')";
+                VALUES ('$n', '$a', $id_td, '$doc', '$e')";
         return DBConnection::query($sql);
     }
 
     public static function read($id_persona) {
-        $sql = "SELECT * FROM personas WHERE id_persona = $id_persona";
+        $id = (int)$id_persona;
+        
+        $sql = "SELECT * FROM personas WHERE id_persona = $id";
         return DBConnection::query($sql);
     }
 
@@ -25,7 +28,7 @@ class dao_personas {
         $a = DBConnection::escape($apellido);
         $doc = DBConnection::escape($nro_documento);
         $e = DBConnection::escape($email);
-        // 2. Asegura que los IDs sean números
+        // Asegura que los IDs sean números
         $id_p = (int)$id_persona;
         $id_td = (int)$id_tipo_doc;
         
