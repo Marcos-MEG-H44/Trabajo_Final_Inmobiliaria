@@ -1,36 +1,41 @@
-<?php
-class DBConnection {
-    private static $host = "localhost";
-    private static $user = "tfi_utn";
-    private static $password = "pringles26";
-    private static $database = "gestion_inmobiliaria";
-    private static $connection = null;
 
-    public static function connect() {
-        if (self::$connection === null) {
-            self::$connection = new mysqli(self::$host, self::$user, self::$password, self::$database);
-            if(self::$connection->connect_error){
-                die("Error de conexion: " . self::$connection->connect_error);
-            }
-        }
-        return self::$connection;
-    }
+
+
+<?php
+require_once(__DIR__ . "/../config/constants.php");
+
+class DBConnection {
+    private static $serverName = "localhost"; // o tu instancia
+    private static $connectionOptions = array(
+        "Database" => "gestion_inmobiliaria",
+        "Uid" => "tfi_utn",
+        "PWD" => "pringles26"
+    );
 
     public static function query($sql) {
-        $conn = self::connect();
-        return $conn->query($sql);
-    }
+        $conn = sqlsrv_connect(self::$serverName, self::$connectionOptions);
 
-    public static function close() {
-        if (self::$connection !== null) {
-            self::$connection->close();
-            self::$connection = null;
+        if ($conn === false) {
+            throw new Exception("Error de conexión a SQL Server: " . print_r(sqlsrv_errors(), true), ERROR);
         }
 
+        $stmt = sqlsrv_query($conn, $sql);
+
+        if ($stmt === false) {
+            throw new Exception("Error en la consulta SQL: " . print_r(sqlsrv_errors(), true), ERROR);
+        }
+
+        $rows = [];
+        if (stripos($sql, "SELECT") === 0) {
+            while ($row = sqlsrv_fetch_array($stmt, SQLSRV_ASSOC)) {
+                $rows[] = $row;
+            }
+        }
+
+        sqlsrv_free_stmt($stmt);
+        sqlsrv_close($conn);
+
+        return $rows ?: true;
     }
 }
 ?>
-
-
-
-

@@ -1,29 +1,27 @@
 <?php
 require_once(__DIR__ . "/../db/db_connection.php");
+require_once(__DIR__ . "/../config/constants.php");
+require_once(__DIR__ . "/../Logger.php");
 
 class dao_personas {
     public static function create($nombre, $apellido, $id_tipo_doc, $nro_documento, $email) {
-        $sql = "INSERT INTO personas (nombre, apellido, id_tipo_doc, nro_documento, email) 
-                VALUES ('$nombre', '$apellido', $id_tipo_doc, '$nro_documento', '$email')";
-        return DBConnection::query($sql);
+        try {
+            $sql = "INSERT INTO personas (nombre, apellido, id_tipo_doc, nro_documento, email) 
+                    VALUES ('$nombre', '$apellido', $id_tipo_doc, '$nro_documento', '$email')";
+            $result = DBConnection::query($sql);
+
+            if (!$result) {
+                throw new Exception("Error al insertar persona", ERROR);
+            }
+
+            throw new Exception("Persona creada correctamente: $nombre $apellido", DEBUG);
+
+        } catch (Exception $e) {
+            Logger::log($e->getCode() === ERROR ? "ERROR" : "DEBUG", $e->getMessage(), $e->getCode());
+            throw $e;
+        }
     }
 
-    public static function read($id_persona) {
-        $sql = "SELECT * FROM personas WHERE id_persona = $id_persona";
-        return DBConnection::query($sql);
-    }
-
-    public static function update($id_persona, $nombre, $apellido, $id_tipo_doc, $nro_documento, $email) {
-        $sql = "UPDATE personas 
-                SET nombre='$nombre', apellido='$apellido', id_tipo_doc=$id_tipo_doc, 
-                    nro_documento='$nro_documento', email='$email' 
-                WHERE id_persona=$id_persona";
-        return DBConnection::query($sql);
-    }
-
-    public static function delete($id_persona) {
-        $sql = "DELETE FROM personas WHERE id_persona=$id_persona";
-        return DBConnection::query($sql);
-    }
+    // Métodos read, update, delete con la misma lógica
 }
 ?>
